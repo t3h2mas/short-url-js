@@ -1,0 +1,29 @@
+{
+  "name": "short-url-js",
+  "version": "1.0.0",
+  "description": "Express.js url shortener",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/t3h2mas/short-url-js.git"
+  },
+  "keywords": [
+    "fcc",
+    "url",
+    "shortener"
+  ],
+  "author": "Thomas Noe",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/t3h2mas/short-url-js/issues"
+  },
+  "homepage": "https://github.com/t3h2mas/short-url-js#readme",
+  "dependencies": {
+    "express": "^4.13.4",
+    "mongodb": "^2.1.7"
+  }
+}
