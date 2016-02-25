@@ -40,6 +40,8 @@ var Url = mongoose.model('Url', urlSchema);
 
 app.set('port', (process.env.PORT || 5000));
 
+
+// may not need this after all.
 app.use(function (req, res, next) {
   req.db = db;
   next();
@@ -52,14 +54,27 @@ app.get('/', function(req, res) {
     res.end("BORK!");
 });
 
+app.get('/:hash', function(req, res) {
+  var fullUrl = req.protocol + '://' + req.get('host') + '/' + req.params.hash;
+  res.end(fullUrl);
+});
+
 app.get('/new/:url(*)', function(req, res) {
   var url = req.params.url;
-
-  var newUrl = new Url({link: url});
-  newUrl.save(function(err, u) {
-    if (err) return console.error(err);
-    res.end(url + " ID: " + u.hash());
+  var shortTemplate = req.protocol + '://' + req.get('host') + '/';
+  var query = {link: url};
+  Url.update(query, query, {upsert: true}, function (e, r) {
+    if (e) return console.error(e);
   });
+
+  function cb(err, u) {
+    var resp = {};
+    resp.original_url = u.link;
+    resp.short_url = shortTemplate + u.hash();
+    res.json(resp);
+  }
+
+  Url.findOne(query, cb);
 });
 
 app.listen(app.get('port'), function() {
