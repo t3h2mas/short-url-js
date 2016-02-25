@@ -55,8 +55,18 @@ app.get('/', function(req, res) {
 });
 
 app.get('/:hash', function(req, res) {
-  var fullUrl = req.protocol + '://' + req.get('host') + '/' + req.params.hash;
-  res.end(fullUrl);
+  var hash = req.params.hash;
+  var index = parseInt(hash, 36);
+
+  Url.findOne({id: index}, function (err, url) {
+    if (err || url === null) {
+      console.error(err);
+      res.end("Bork :(");
+      return;
+    }
+    res.redirect(url.link);
+  });
+
 });
 
 app.get('/new/:url(*)', function(req, res) {
