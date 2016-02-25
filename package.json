@@ -24,6 +24,7 @@
   "homepage": "https://github.com/t3h2mas/short-url-js#readme",
   "dependencies": {
     "express": "^4.13.4",
-    "mongodb": "^2.1.7"
+    "mongoose": "^4.4.5",
+    "mongoose-auto-increment": "^5.0.1"
   }
 }
