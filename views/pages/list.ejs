@@ -6,9 +6,9 @@
 <body>
   <div class="container-fluid">
     <div class="well">
-      <ul>
+      <ul class="list-group">
         <% urls.forEach(function (url) { %>
-          <li>
+          <li class="list-group-item">
             link: <a href="<%= url.link %>"><%= url.link %></a> -
             hash: <a href="<%= shortTemplate %><%= url.hash() %>"><%= url.hash() %></a>
           </li>

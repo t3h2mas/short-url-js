@@ -54,10 +54,7 @@ app.get('/list/', function (req, res) {
 });
 
 app.get('/', function(req, res) {
-  if (req.db)
-    res.end("FOUND");
-  else
-    res.end("BORK!");
+  res.render('pages/index');
 });
 
 app.get('/:hash', function(req, res) {
