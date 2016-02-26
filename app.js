@@ -39,12 +39,18 @@ urlSchema.plugin(autoIncrement.plugin, {
 var Url = mongoose.model('Url', urlSchema);
 
 app.set('port', (process.env.PORT || 5000));
-
+app.set('view engine', 'jade');
 
 // may not need this after all.
 app.use(function (req, res, next) {
   req.db = db;
   next();
+});
+
+app.get('/list/', function (req, res) {
+  Url.find( {}, function (err, urls) {
+    res.render('list', {urls: urls});
+  });
 });
 
 app.get('/', function(req, res) {
@@ -86,6 +92,8 @@ app.get('/new/:url(*)', function(req, res) {
 
   Url.findOne(query, cb);
 });
+
+
 
 app.listen(app.get('port'), function() {
   console.log('short-url app listening on port: ' + app.get('port'));

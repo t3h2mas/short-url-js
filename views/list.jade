@@ -1,0 +1,10 @@
+html
+  head
+    title url list
+  body
+    ul
+      each url in urls
+        - var hash = url.hash();
+        li #{url.link}(#{url.id}) - #{hash}
+      else
+        Error finding urls
