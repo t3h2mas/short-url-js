@@ -39,17 +39,17 @@ urlSchema.plugin(autoIncrement.plugin, {
 var Url = mongoose.model('Url', urlSchema);
 
 app.set('port', (process.env.PORT || 5000));
-app.set('view engine', 'jade');
+app.set('view engine', 'ejs');
 
 // may not need this after all.
 app.use(function (req, res, next) {
-  req.db = db;
+    req.shortTemplate = req.protocol + '://' + req.get('host') + '/';
   next();
 });
 
 app.get('/list/', function (req, res) {
   Url.find( {}, function (err, urls) {
-    res.render('list', {urls: urls});
+    res.render('pages/list', {urls: urls, shortTemplate: req.shortTemplate});
   });
 });
 
@@ -77,14 +77,13 @@ app.get('/:hash', function(req, res) {
 
 app.get('/new/:url(*)', function(req, res) {
   var url = req.params.url;
-  var shortTemplate = req.protocol + '://' + req.get('host') + '/';
   var query = {link: url};
 
   function cb(err, u) {
     if (err) console.error(err + ' [cb]');
     var resp = {};
     resp.original_url = u.link;
-    resp.short_url = shortTemplate + u.hash();
+    resp.short_url = req.shortTemplate + u.hash();
     res.json(resp);
   }
 

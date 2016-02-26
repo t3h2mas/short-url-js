@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <% include ../partials/head %>
+</head>
+<body>
+  <div class="container-fluid">
+    <div class="well">
+      <ul>
+        <% urls.forEach(function (url) { %>
+          <li>
+            link: <a href="<%= url.link %>"><%= url.link %></a> -
+            hash: <a href="<%= shortTemplate %><%= url.hash() %>"><%= url.hash() %></a>
+          </li>
+        <% }); %>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>
