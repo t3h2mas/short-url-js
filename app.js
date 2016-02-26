@@ -79,18 +79,25 @@ app.get('/new/:url(*)', function(req, res) {
   var url = req.params.url;
   var shortTemplate = req.protocol + '://' + req.get('host') + '/';
   var query = {link: url};
-  Url.update(query, query, {upsert: true}, function (e, r) {
-    if (e) return console.error(e);
-  });
 
   function cb(err, u) {
+    if (err) console.error(err + ' [cb]');
     var resp = {};
     resp.original_url = u.link;
     resp.short_url = shortTemplate + u.hash();
     res.json(resp);
   }
 
-  Url.findOne(query, cb);
+  Url.findOne(query, function (e, resp) {
+    if (e) console.error(e + '[Url.findOne]');
+    if (resp) {
+      cb(null, resp);
+    }
+    else {
+      var newUrl = new Url(query);
+      newUrl.save(cb);
+    }
+  });
 });
 
 
