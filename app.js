@@ -57,7 +57,9 @@ app.get('/new/:url(*)', (req, res) => {
   const query = { link: url }
 
   function cb(err, u) {
-    if (err) console.error(err + ' [cb]')
+    if (err) {
+      console.error(err + ' [cb]')
+    }
     const resp = {}
     resp.original_url = u.link
     resp.short_url = req.shortTemplate + u.hash()
@@ -65,7 +67,9 @@ app.get('/new/:url(*)', (req, res) => {
   }
 
   Url.findOne(query, function(e, resp) {
-    if (e) console.error(e + '[Url.findOne]')
+    if (e) {
+      console.error(e + '[Url.findOne]')
+    }
     if (resp) {
       cb(null, resp)
     } else {
