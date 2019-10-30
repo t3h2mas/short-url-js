@@ -31,6 +31,10 @@ app.use((req, res, next) => {
 
 app.get('/list/', (req, res) => {
   Url.find({}, (err, urls) => {
+    if (err) {
+      console.error(err.message, err.stack)
+      return res.status(500).end()
+    }
     res.render('pages/list', { urls: urls, shortTemplate: req.shortTemplate })
   })
 })
@@ -41,12 +45,12 @@ app.get('/', (req, res) => {
 
 app.get('/:hash', (req, res) => {
   const hash = req.params.hash
-  const index = parseInt(hash, 36)
+  const idOfHash = parseInt(hash, 36)
 
-  Url.findOne({ id: index }, function(err, url) {
+  Url.findOne({ id: idOfHash }, (err, url) => {
     if (err || url === null) {
       console.error(err)
-      return res.end('Bork :(')
+      return res.status(500).end()
     }
     res.redirect(url.link)
   })
@@ -56,26 +60,30 @@ app.get('/new/:url(*)', (req, res) => {
   const url = req.params.url
   const query = { link: url }
 
-  function cb(err, u) {
+  Url.findOne(query, (err, url) => {
     if (err) {
-      console.error(err + ' [cb]')
+      console.error(err + '[Url.findOne]')
+      return res.status(500).end()
     }
-    const resp = {}
-    resp.original_url = u.link
-    resp.short_url = req.shortTemplate + u.hash()
-    res.json(resp)
-  }
 
-  Url.findOne(query, function(e, resp) {
-    if (e) {
-      console.error(e + '[Url.findOne]')
+    if (url) {
+      return res.json({
+        original_url: url.link,
+        short_url: req.shortTemplate + url.hash()
+      })
     }
-    if (resp) {
-      cb(null, resp)
-    } else {
-      const newUrl = new Url(query)
-      newUrl.save(cb)
-    }
+
+    const newUrl = new Url(query)
+    newUrl.save((err, newUrl) => {
+      if (err) {
+        console.error(err.message, err.stack)
+        return res.status(500).end()
+      }
+      res.json({
+        original_url: newUrl.link,
+        short_url: req.shortTemplate + newUrl.hash()
+      })
+    })
   })
 })
 
