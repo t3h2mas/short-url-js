@@ -6,7 +6,7 @@
 <body>
   <div class="container-fluid">
     <div class="well">
-        <% if (urls && urls.length) { %>
+    <% if (urls && urls.length) { %>
       <ul class="list-group">
         <% urls.forEach(function (url) { %>
           <li class="list-group-item">
@@ -15,9 +15,9 @@
           </li>
         <% }); %>
       </ul>
-        <% } else { %>
+    <% } else { %>
             Add a new url using <pre>/new/:url</pre>
-        <% } %>
+    <% } %>
     </div>
   </div>
 </body>
