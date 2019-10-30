@@ -16,24 +16,7 @@ db.once('open', function() {
   console.log('Connected to MongoDB')
 })
 
-const urlSchema = mongoose.Schema({
-  link: {
-    type: String,
-    index: { unique: true, dropDups: true }
-  }
-})
-
-urlSchema.methods.hash = function() {
-  return this.id.toString(36)
-}
-
-urlSchema.plugin(autoIncrement.plugin, {
-  model: 'Url',
-  field: 'id',
-  startAt: 1
-})
-
-const Url = mongoose.model('Url', urlSchema)
+const Url = require('./infrastructure/models/Url')
 
 app.set('port', process.env.PORT || 5000)
 app.set('view engine', 'ejs')
