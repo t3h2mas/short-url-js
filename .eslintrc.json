@@ -1,0 +1,16 @@
+{
+  "extends": ["standard", "prettier"],
+  "env": {
+    "node": true,
+    "mocha": true
+  },
+  "rules": {
+    "no-var": "error",
+    "prefer-const": "error",
+    "prefer-arrow-callback": "error",
+    "eqeqeq": ["error", "always"],
+    "no-trailing-spaces": "error",
+    "object-curly-spacing": ["error", "always"],
+    "spaced-comment": ["error", "always"]
+  } 
+}
