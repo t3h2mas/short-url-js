@@ -1,5 +1,10 @@
 const express = require('express')
 const app = express()
+
+const bodyParser = require('body-parser')
+
+app.use(bodyParser.json())
+
 const mongoose = require('mongoose')
 const autoIncrement = require('mongoose-auto-increment')
 
@@ -66,9 +71,9 @@ app.get('/:hash', async (req, res) => {
   }
 })
 
-app.get('/new/:url(*)', async (req, res) => {
+app.post('/', async (req, res) => {
   try {
-    const url = await urlService.getSet(req.params.url)
+    const url = await urlService.getSet(req.body.url)
 
     return res.json(UrlResponse.jsonResponseFor(url, req.shortTemplate))
   } catch (err) {
