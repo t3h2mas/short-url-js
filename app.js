@@ -3,6 +3,8 @@ const app = express()
 const mongoose = require('mongoose')
 const autoIncrement = require('mongoose-auto-increment')
 
+const logger = require('./infrastructure/logger')
+
 const DEFAULT_APPLICATION_PORT = 5000
 
 // set up the database
@@ -13,9 +15,9 @@ const db = mongoose.connection
 // auto increment ID
 autoIncrement.initialize(db)
 
-db.on('error', console.error.bind(console, 'connection error:'))
+db.on('error', (error) => logger.error(`connection error: ${error}`))
 db.once('open', () => {
-  console.log('Connected to MongoDB')
+  logger.info('Connected to MongoDB')
 })
 
 const Url = require('./infrastructure/models/Url')
@@ -32,7 +34,7 @@ app.use((req, res, next) => {
 app.get('/list/', (req, res) => {
   Url.find({}, (err, urls) => {
     if (err) {
-      console.error(err.message, err.stack)
+      logger.error(err.message, err.stack)
       return res.status(500).end()
     }
     res.render('pages/list', { urls: urls, shortTemplate: req.shortTemplate })
@@ -49,7 +51,7 @@ app.get('/:hash', (req, res) => {
 
   Url.findOne({ id: idOfHash }, (err, url) => {
     if (err || url === null) {
-      console.error(err)
+      logger.error(err)
       return res.status(500).end()
     }
     res.redirect(url.link)
@@ -62,7 +64,7 @@ app.get('/new/:url(*)', (req, res) => {
 
   Url.findOne(query, (err, url) => {
     if (err) {
-      console.error(err + '[Url.findOne]')
+      logger.error(err + '[Url.findOne]')
       return res.status(500).end()
     }
 
@@ -76,7 +78,7 @@ app.get('/new/:url(*)', (req, res) => {
     const newUrl = new Url(query)
     newUrl.save((err, newUrl) => {
       if (err) {
-        console.error(err.message, err.stack)
+        logger.error(err.message, err.stack)
         return res.status(500).end()
       }
       res.json({
@@ -88,5 +90,5 @@ app.get('/new/:url(*)', (req, res) => {
 })
 
 app.listen(app.get('port'), () => {
-  console.log('short-url app listening on port: ' + app.get('port'))
+  logger.info('short-url app listening on port: ' + app.get('port'))
 })
