@@ -31,62 +31,64 @@ app.use((req, res, next) => {
   next()
 })
 
-app.get('/list/', (req, res) => {
-  Url.find({}, (err, urls) => {
-    if (err) {
-      logger.error(err.message, err.stack)
-      return res.status(500).end()
-    }
+app.get('/list/', async (req, res) => {
+  try {
+    const urls = await Url.find({})
     res.render('pages/list', { urls: urls, shortTemplate: req.shortTemplate })
-  })
+  } catch (err) {
+    logger.error(err.message, err.stack)
+    return res.status(500).end()
+  }
 })
 
 app.get('/', (req, res) => {
   res.render('pages/index')
 })
 
-app.get('/:hash', (req, res) => {
+app.get('/:hash', async (req, res) => {
   const hash = req.params.hash
   const idOfHash = parseInt(hash, 36)
 
-  Url.findOne({ id: idOfHash }, (err, url) => {
-    if (err || url === null) {
-      logger.error(err)
-      return res.status(500).end()
+  try {
+    const url = await Url.findOne({ id: idOfHash })
+    if (!url) {
+      return res.status(404).end()
     }
     res.redirect(url.link)
-  })
+  } catch (err) {
+    logger.error(err)
+    return res.status(500).end()
+  }
 })
 
-app.get('/new/:url(*)', (req, res) => {
+app.get('/new/:url(*)', async (req, res) => {
   const url = req.params.url
-  const query = { link: url }
 
-  Url.findOne(query, (err, url) => {
-    if (err) {
-      logger.error(err + '[Url.findOne]')
-      return res.status(500).end()
-    }
-
-    if (url) {
-      return res.json({
-        original_url: url.link,
-        short_url: req.shortTemplate + url.hash()
-      })
-    }
-
-    const newUrl = new Url(query)
-    newUrl.save((err, newUrl) => {
-      if (err) {
-        logger.error(err.message, err.stack)
-        return res.status(500).end()
-      }
-      res.json({
-        original_url: newUrl.link,
-        short_url: req.shortTemplate + newUrl.hash()
-      })
-    })
+  const existingUrl = await Url.findOne({
+    link: url
   })
+
+  if (existingUrl) {
+    return res.json({
+      original_url: existingUrl.link,
+      short_url: req.shortTemplate + existingUrl.hash()
+    })
+  }
+
+  const newUrl = new Url({
+    link: url
+  })
+
+  try {
+    const createdUrl = await newUrl.save()
+    res.json({
+      original_url: createdUrl.link,
+      short_url: req.shortTemplate + createdUrl.hash()
+    })
+  } catch (err) {
+    logger.error(err.message, err.stack)
+    return res.status(500).end()
+  }
 })
 
 app.listen(app.get('port'), () => {
