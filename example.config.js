@@ -1,2 +1,3 @@
-var url = 'mongodb uri here';
-module.exports.url = url;
+module.exports = {
+  url: 'mongodb uri here'
+}
