@@ -12,7 +12,7 @@ const db = mongoose.connection
 autoIncrement.initialize(db)
 
 db.on('error', console.error.bind(console, 'connection error:'))
-db.once('open', function() {
+db.once('open', () => {
   console.log('Connected to MongoDB')
 })
 
@@ -23,12 +23,12 @@ app.set('view engine', 'ejs')
 
 // may not need this after all.
 app.use((req, res, next) => {
-  req.shortTemplate = req.protocol + '://' + req.get('host') + '/'
+  req.shortTemplate = `${req.protocol}://${req.get('host')}/`
   next()
 })
 
 app.get('/list/', (req, res) => {
-  Url.find({}, function(err, urls) {
+  Url.find({}, (err, urls) => {
     res.render('pages/list', { urls: urls, shortTemplate: req.shortTemplate })
   })
 })
@@ -38,26 +38,25 @@ app.get('/', (req, res) => {
 })
 
 app.get('/:hash', (req, res) => {
-  var hash = req.params.hash
-  var index = parseInt(hash, 36)
+  const hash = req.params.hash
+  const index = parseInt(hash, 36)
 
   Url.findOne({ id: index }, function(err, url) {
     if (err || url === null) {
       console.error(err)
-      res.end('Bork :(')
-      return
+      return res.end('Bork :(')
     }
     res.redirect(url.link)
   })
 })
 
 app.get('/new/:url(*)', (req, res) => {
-  var url = req.params.url
-  var query = { link: url }
+  const url = req.params.url
+  const query = { link: url }
 
   function cb(err, u) {
     if (err) console.error(err + ' [cb]')
-    var resp = {}
+    const resp = {}
     resp.original_url = u.link
     resp.short_url = req.shortTemplate + u.hash()
     res.json(resp)
@@ -68,7 +67,7 @@ app.get('/new/:url(*)', (req, res) => {
     if (resp) {
       cb(null, resp)
     } else {
-      var newUrl = new Url(query)
+      const newUrl = new Url(query)
       newUrl.save(cb)
     }
   })
