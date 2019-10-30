@@ -7,10 +7,10 @@
 <div class="container-fluid">
   <p>
     routes:<br />
-      / -> home<br />
-      /* -> shortened url<br />
-      /new/url -> returns json object with original and shortened urls.<br />
-      /list/ -> list of urls currently stored by app.
+      GET / -> home<br />
+      GET /:id -> shortened url<br />
+      POST / { "url": String } -> returns json object with original and shortened urls.<br />
+      GET /list/ -> list of urls currently stored by app.
   </p>
 </div>
 </body>
