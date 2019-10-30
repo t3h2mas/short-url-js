@@ -4,6 +4,8 @@ const mongoose = require('mongoose')
 const autoIncrement = require('mongoose-auto-increment')
 
 const UrlService = require('./services/UrlService')
+const UrlResponse = require('./infrastructure/responses/UrlResponse')
+
 const logger = require('./infrastructure/logger')
 
 const DEFAULT_APPLICATION_PORT = 5000
@@ -68,10 +70,7 @@ app.get('/new/:url(*)', async (req, res) => {
   try {
     const url = await urlService.getSet(req.params.url)
 
-    return res.json({
-      original_url: url.link,
-      short_url: req.shortTemplate + url.hash()
-    })
+    return res.json(UrlResponse.jsonResponseFor(url, req.shortTemplate))
   } catch (err) {
     logger.error(err.message, err.stack)
     return res.status(500).end()
