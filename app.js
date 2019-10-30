@@ -3,6 +3,8 @@ const app = express()
 const mongoose = require('mongoose')
 const autoIncrement = require('mongoose-auto-increment')
 
+const DEFAULT_APPLICATION_PORT = 5000
+
 // set up the database
 const url = require('./config').url
 mongoose.connect(url)
@@ -18,7 +20,7 @@ db.once('open', () => {
 
 const Url = require('./infrastructure/models/Url')
 
-app.set('port', process.env.PORT || 5000)
+app.set('port', process.env.PORT || DEFAULT_APPLICATION_PORT)
 app.set('view engine', 'ejs')
 
 // may not need this after all.
